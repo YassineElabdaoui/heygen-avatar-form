@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Avatars HeyGen</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+
+    h2 { color: #333; }
+    h3 { color: #444; margin-bottom: 16px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+      max-width: 900px;
+    }
+
+    .row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .col { display: flex; flex-direction: column; gap: 8px; }
+
+    label { font-weight: bold; color: #555; font-size: 14px; }
+
+    input[type="text"], textarea, select {
+      padding: 10px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: white;
+      font-family: Arial;
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 3px rgba(74,144,226,0.15);
+    }
+
+    select { width: 300px; cursor: pointer; }
+    #langFilter { width: 180px; }
+    #genderFilter { width: 130px; }
+    #productName2 { width: 400px; }
+    #productDescription2 {
+      width: 400px;
+      height: 120px;
+      resize: vertical;
+    }
+
+    #listenBtn {
+      padding: 8px 18px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #listenBtn:hover { background: #218838; }
+    #listenBtn:disabled { background: #aaa; cursor: default; }
+
+    audio { margin-top: 6px; width: 300px; }
+    #voiceInfo { font-size: 13px; color: #666; margin-top: 4px; }
+
+    #preview {
+      display: none;
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 500px;
+      margin-top: 16px;
+      border: 1px solid #eee;
+    }
+    #preview h3 { margin-top: 0; }
+    #avatarImage { width: 100%; border-radius: 8px; display: block; }
+    #avatarVideo { width: 100%; border-radius: 8px; display: none; }
+
+    .toggle-btn {
+      margin-top: 12px;
+      padding: 8px 20px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .toggle-btn:hover { background: #357abd; }
+
+    #summary {
+      display: none;
+      background: #eaf4ff;
+      border: 1px solid #b3d8f5;
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 14px;
+      color: #333;
+      max-width: 860px;
+      margin-bottom: 16px;
+    }
+    #summary p { margin: 4px 0; }
+
+    .btn-row { display: flex; gap: 14px; align-items: center; margin-top: 10px; }
+
+    #generateBtn {
+      padding: 12px 30px;
+      background: #e05c2a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    #generateBtn:hover { background: #c44e22; }
+    #generateBtn:disabled { background: #aaa; cursor: default; }
+
+    #submitBtn {
+      padding: 12px 30px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    #submitBtn:hover { background: #357abd; }
+    #submitBtn:disabled { background: #aaa; cursor: default; }
+
+    #scriptsSection {
+      display: none;
+      max-width: 900px;
+      margin-bottom: 24px;
+    }
+
+    .script-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .script-card:hover {
+      border-color: #4a90e2;
+      box-shadow: 0 4px 16px rgba(74,144,226,0.15);
+    }
+
+    .script-card.selected {
+      border-color: #28a745;
+      background: #f0fff4;
+    }
+
+    .script-card .script-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .script-card .script-label { font-weight: bold; font-size: 15px; color: #333; }
+
+    .script-card .select-badge {
+      display: none;
+      background: #28a745;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .script-card.selected .select-badge { display: inline-block; }
+
+    .script-card textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+      color: #333;
+      resize: vertical;
+      box-sizing: border-box;
+      background: #fafafa;
+    }
+
+    .script-card.selected textarea { background: white; border-color: #28a745; }
+
+    .script-actions { display: flex; gap: 10px; margin-top: 10px; }
+
+    .btn-select-script {
+      padding: 7px 18px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .btn-select-script:hover { background: #357abd; }
+    .btn-select-script.active { background: #28a745; }
+
+    #selectedScriptBox {
+      display: none;
+      background: #f0fff4;
+      border: 2px solid #28a745;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 900px;
+      margin-bottom: 24px;
+    }
+
+    #selectedScriptBox h3 { color: #28a745; margin-top: 0; border-bottom-color: #28a745; }
+
+    #finalScript {
+      width: 100%;
+      min-height: 120px;
+      border: 1px solid #28a745;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: #333;
+      resize: vertical;
+      box-sizing: border-box;
+      font-family: Arial;
+      background: white;
+    }
+
+    #loadingScripts {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      color: #555;
+      font-size: 15px;
+      max-width: 900px;
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid #ddd;
+      border-top-color: #4a90e2;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #toast {
+      display: none;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      color: white;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      z-index: 999;
+    }
+    #toast.success { background: #28a745; }
+    #toast.error   { background: #dc3545; }
+    #toast.loading { background: #f0a500; }
+  </style>
+</head>
+
+<body>
+
+  <h2>🎬 Créer une vidéo Avatar HeyGen</h2>
+
+  <!-- ── 1. Avatar ───────────────────────────────────── -->
+  <div class="card">
+    <h3>👤 Choisir un Avatar</h3>
+    <div class="col">
+      <label>Avatar</label>
+      <select id="avatarSelect">
+        <option value="">-- Sélectionner un avatar --</option>
+      </select>
+    </div>
+    <div id="preview">
+      <h3 id="avatarTitle"></h3>
+      <img id="avatarImage" />
+      <video id="avatarVideo" controls loop></video>
+      <br>
+      <button class="toggle-btn" id="toggleBtn">🎬 Voir la vidéo</button>
+    </div>
+  </div>
+
+  <!-- ── 2. Voix ─────────────────────────────────────── -->
+  <div class="card">
+    <h3>🎙️ Choisir une Voix</h3>
+    <div class="row" style="margin-bottom:12px;">
+      <div class="col">
+        <label>Langue</label>
+        <select id="langFilter">
+          <option value="">Toutes les langues</option>
+        </select>
+      </div>
+      <div class="col">
+        <label>Genre</label>
+        <select id="genderFilter">
+          <option value="">Tous genres</option>
+          <option value="male">👨 Homme</option>
+          <option value="female">👩 Femme</option>
+        </select>
+      </div>
+    </div>
+    <div class="col">
+      <label>Voix</label>
+      <select id="voiceSelect">
+        <option value="">-- Sélectionner une voix --</option>
+      </select>
+      <div id="voiceInfo"></div>
+      <div style="display:flex; gap:10px; align-items:center; margin-top:4px;">
+        <button id="listenBtn" disabled>🔊 Écouter</button>
+        <audio id="voiceAudio" controls style="display:none;"></audio>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. Générer scripts via n8n ─────────────────── -->
+  <div class="card">
+    <h3>📤 Générer les scripts via n8n</h3>
+    <p style="color:#666; font-size:14px; margin-top:0;">
+      Remplissez les champs ci-dessous et cliquez <strong>Générer les scripts</strong> pour obtenir 3 scripts IA.
+    </p>
+    <div class="row">
+      <div class="col">
+        <label for="productName2">Nom du produit / service</label>
+        <input type="text" id="productName2" placeholder="Ex : Vélo électrique" />
+      </div>
+    </div>
+    <div class="row" style="margin-top:16px;">
+      <div class="col">
+        <label for="productDescription2">Description du produit / service</label>
+        <textarea id="productDescription2" placeholder="Décrivez votre produit ou service…"></textarea>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <button id="submitBtn">✨ Générer les scripts</button>
+    </div>
+  </div>
+
+  <!-- ── Loading ────────────────────────────────────── -->
+  <div id="loadingScripts">
+    <div class="spinner"></div>
+    <span>Génération des scripts en cours… ⏳</span>
+  </div>
+
+  <!-- ── Scripts générés ────────────────────────────── -->
+  <div id="scriptsSection">
+    <div class="card" style="max-width:900px;">
+      <h3>✍️ Choisissez et modifiez votre script</h3>
+      <p style="color:#666; font-size:14px; margin-top:0;">Cliquez sur un script pour le sélectionner, vous pouvez aussi le modifier directement.</p>
+
+      <div class="script-card" id="scriptCard1">
+        <div class="script-header">
+          <span class="script-label">📝 Script 1</span>
+          <span class="select-badge">✅ Sélectionné</span>
+        </div>
+        <textarea id="scriptText1"></textarea>
+        <div class="script-actions">
+          <button class="btn-select-script" id="btnSelect1">Choisir ce script</button>
+        </div>
+      </div>
+
+      <div class="script-card" id="scriptCard2">
+        <div class="script-header">
+          <span class="script-label">📝 Script 2</span>
+          <span class="select-badge">✅ Sélectionné</span>
+        </div>
+        <textarea id="scriptText2"></textarea>
+        <div class="script-actions">
+          <button class="btn-select-script" id="btnSelect2">Choisir ce script</button>
+        </div>
+      </div>
+
+      <div class="script-card" id="scriptCard3">
+        <div class="script-header">
+          <span class="script-label">📝 Script 3</span>
+          <span class="select-badge">✅ Sélectionné</span>
+        </div>
+        <textarea id="scriptText3"></textarea>
+        <div class="script-actions">
+          <button class="btn-select-script" id="btnSelect3">Choisir ce script</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Script final sélectionné ───────────────────── -->
+  <div id="selectedScriptBox">
+    <h3>✅ Script sélectionné (modifiable)</h3>
+    <p style="color:#555; font-size:13px; margin-top:0;">Ce script sera utilisé pour générer la vidéo.</p>
+    <textarea id="finalScript"></textarea>
+  </div>
+
+  <!-- ── Résumé + Générer ───────────────────────────── -->
+  <div id="summary">
+    <strong>📋 Récapitulatif :</strong>
+    <p>👤 Avatar : <span id="sumAvatar">—</span></p>
+    <p>🎙️ Voix : <span id="sumVoice">—</span></p>
+    <p>✍️ Script : <span id="sumScript">—</span></p>
+  </div>
+
+  <div class="btn-row">
+    <button id="generateBtn" disabled>🚀 Générer la vidéo</button>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+
+    const HEYGEN_API_KEY = "sk_V2_hgu_kFrSiuLbsJK_3wgiHVKuARVEDga1eCq5I6NfhFMi28ev";
+
+    let avatarsData    = [];
+    let allVoices      = [];
+    let filteredVoices = [];
+    let showingVideo   = false;
+    let selectedScript = "";
+
+    // Stocke le nom/desc du produit au moment de la génération des scripts
+    let lastProductName = "";
+    let lastProductDesc = "";
+
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("avatarSelect") .addEventListener("change", showAvatar);
+      document.getElementById("langFilter")   .addEventListener("change", filterVoices);
+      document.getElementById("genderFilter") .addEventListener("change", filterVoices);
+      document.getElementById("voiceSelect")  .addEventListener("change", onVoiceChange);
+      document.getElementById("listenBtn")    .addEventListener("click",  listenVoice);
+      document.getElementById("toggleBtn")    .addEventListener("click",  toggleMedia);
+      document.getElementById("generateBtn")  .addEventListener("click",  generate);
+      document.getElementById("submitBtn")    .addEventListener("click",  submitToWebhook);
+
+      document.getElementById("btnSelect1").addEventListener("click", () => selectScript(1));
+      document.getElementById("btnSelect2").addEventListener("click", () => selectScript(2));
+      document.getElementById("btnSelect3").addEventListener("click", () => selectScript(3));
+
+      document.getElementById("finalScript").addEventListener("input", function() {
+        selectedScript = this.value;
+        updateSummary();
+      });
+
+      loadAvatars();
+      loadVoices();
+    });
+
+    async function loadAvatars() {
+      try {
+        const res  = await fetch("https://api.heygen.com/v2/avatars", {
+          headers: { "X-Api-Key": HEYGEN_API_KEY }
+        });
+        const data = await res.json();
+        avatarsData = data.data.avatars;
+        const select = document.getElementById("avatarSelect");
+        avatarsData.forEach((avatar, i) => {
+          const opt = document.createElement("option");
+          opt.value = i; opt.textContent = avatar.avatar_name;
+          select.appendChild(opt);
+        });
+      } catch(e) { console.error("Erreur avatars:", e); }
+    }
+
+    async function loadVoices() {
+      try {
+        const res  = await fetch("https://api.heygen.com/v2/voices", {
+          headers: { "X-Api-Key": HEYGEN_API_KEY }
+        });
+        const data = await res.json();
+        allVoices  = data.data.voices;
+        const langs = [...new Set(allVoices.map(v => v.language))].sort();
+        const langFilter = document.getElementById("langFilter");
+        langs.forEach(lang => {
+          const opt = document.createElement("option");
+          opt.value = lang; opt.textContent = lang;
+          langFilter.appendChild(opt);
+        });
+        filterVoices();
+      } catch(e) { console.error("Erreur voix:", e); }
+    }
+
+    function filterVoices() {
+      const lang   = document.getElementById("langFilter").value;
+      const gender = document.getElementById("genderFilter").value;
+      filteredVoices = allVoices.filter(v =>
+        (lang   ? v.language === lang   : true) &&
+        (gender ? v.gender   === gender : true)
+      );
+      const sel = document.getElementById("voiceSelect");
+      sel.innerHTML = `<option value="">-- Sélectionner une voix (${filteredVoices.length}) --</option>`;
+      filteredVoices.forEach((v, i) => {
+        const opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = `${v.name} — ${v.language} (${v.gender === "male" ? "👨" : "👩"})`;
+        sel.appendChild(opt);
+      });
+      document.getElementById("voiceInfo").textContent = "";
+      document.getElementById("voiceAudio").style.display = "none";
+      document.getElementById("listenBtn").disabled = true;
+      updateSummary();
+    }
+
+    function onVoiceChange() {
+      const index = document.getElementById("voiceSelect").value;
+      if (index === "") {
+        document.getElementById("listenBtn").disabled = true;
+        document.getElementById("voiceInfo").textContent = "";
+        document.getElementById("voiceAudio").style.display = "none";
+        updateSummary(); return;
+      }
+      const voice = filteredVoices[index];
+      document.getElementById("voiceInfo").textContent = `ID : ${voice.voice_id}`;
+      document.getElementById("listenBtn").disabled = !voice.preview_audio;
+      document.getElementById("voiceAudio").style.display = "none";
+      document.getElementById("voiceAudio").src = "";
+      updateSummary();
+    }
+
+    function listenVoice() {
+      const index = document.getElementById("voiceSelect").value;
+      if (index === "") return;
+      const voice = filteredVoices[index];
+      if (voice.preview_audio) {
+        const audio = document.getElementById("voiceAudio");
+        audio.src = voice.preview_audio;
+        audio.style.display = "block";
+        audio.play();
+      }
+    }
+
+    function showAvatar() {
+      const index = document.getElementById("avatarSelect").value;
+      if (index === "") {
+        document.getElementById("preview").style.display = "none";
+        updateSummary(); return;
+      }
+      const avatar = avatarsData[index];
+      showingVideo = false;
+      document.getElementById("avatarTitle").textContent = avatar.avatar_name;
+      const img = document.getElementById("avatarImage");
+      img.src = avatar.preview_image_url; img.style.display = "block";
+      const video = document.getElementById("avatarVideo");
+      video.src = avatar.preview_video_url; video.style.display = "none";
+      document.getElementById("toggleBtn").textContent = "🎬 Voir la vidéo";
+      document.getElementById("preview").style.display = "block";
+      updateSummary();
+    }
+
+    function toggleMedia() {
+      const img   = document.getElementById("avatarImage");
+      const video = document.getElementById("avatarVideo");
+      const btn   = document.getElementById("toggleBtn");
+      showingVideo = !showingVideo;
+      if (showingVideo) {
+        img.style.display = "none"; video.style.display = "block"; video.play();
+        btn.textContent = "🖼️ Voir l'image";
+      } else {
+        video.style.display = "none"; video.pause(); img.style.display = "block";
+        btn.textContent = "🎬 Voir la vidéo";
+      }
+    }
+
+    function selectScript(num) {
+      [1, 2, 3].forEach(n => {
+        document.getElementById(`scriptCard${n}`).classList.remove("selected");
+        document.getElementById(`btnSelect${n}`).classList.remove("active");
+        document.getElementById(`btnSelect${n}`).textContent = "Choisir ce script";
+      });
+      document.getElementById(`scriptCard${num}`).classList.add("selected");
+      document.getElementById(`btnSelect${num}`).classList.add("active");
+      document.getElementById(`btnSelect${num}`).textContent = "✅ Sélectionné";
+
+      const scriptContent = document.getElementById(`scriptText${num}`).value;
+      selectedScript = scriptContent;
+      document.getElementById("finalScript").value = scriptContent;
+      document.getElementById("selectedScriptBox").style.display = "block";
+      document.getElementById("selectedScriptBox").scrollIntoView({ behavior: "smooth", block: "start" });
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const ai = document.getElementById("avatarSelect").value;
+      const vi = document.getElementById("voiceSelect").value;
+      const sc = selectedScript.trim();
+      const ok = ai !== "" && vi !== "" && sc;
+
+      document.getElementById("summary").style.display = ok ? "block" : "none";
+      document.getElementById("generateBtn").disabled = !ok;
+
+      if (ok) {
+        document.getElementById("sumAvatar").textContent = avatarsData[ai].avatar_name;
+        document.getElementById("sumVoice").textContent  = filteredVoices[vi].name;
+        document.getElementById("sumScript").textContent = sc.length > 60 ? sc.substring(0,60)+"…" : sc;
+      }
+    }
+
+    // ── Générer la vidéo → webhook n8n ────────────────────────
+    async function generate() {
+      const ai = document.getElementById("avatarSelect").value;
+      const vi = document.getElementById("voiceSelect").value;
+      const sc = document.getElementById("finalScript").value.trim();
+
+      if (!ai || !vi || !sc) {
+        showToast("⚠️ Veuillez sélectionner un avatar, une voix et un script.", "error");
+        return;
+      }
+
+      const payload = {
+        avatar_id:           avatarsData[ai].avatar_id,
+        avatar_name:         avatarsData[ai].avatar_name,
+        voice_id:            filteredVoices[vi].voice_id,
+        voice_name:          filteredVoices[vi].name,
+        product_name:        lastProductName,   // ← mémorisé lors du submit
+        product_description: lastProductDesc,   // ← mémorisé lors du submit
+        script:              sc,
+        submitted_at:        new Date().toISOString()
+      };
+
+      const btn = document.getElementById("generateBtn");
+      btn.disabled = true;
+      btn.textContent = "⏳ Envoi en cours…";
+      showToast("⏳ Envoi vers n8n…", "loading");
+
+      try {
+        const res = await fetch("https://yassineel123.app.n8n.cloud/webhook-test/generation-video", {
+          method:  "POST",
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          body:    JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          showToast("✅ Vidéo en cours de génération !", "success");
+          btn.textContent = "✅ Envoyé !";
+          setTimeout(() => {
+            btn.textContent = "🚀 Générer la vidéo";
+            btn.disabled = false;
+            updateSummary();
+          }, 3000);
+        } else {
+          showToast(`❌ Erreur ${res.status} — Vérifiez le webhook n8n`, "error");
+          btn.textContent = "🚀 Générer la vidéo";
+          btn.disabled = false;
+        }
+      } catch (err) {
+        showToast("❌ Connexion refusée. Vérifiez que n8n écoute.", "error");
+        console.error(err);
+        btn.textContent = "🚀 Générer la vidéo";
+        btn.disabled = false;
+      }
+    }
+
+    // ── Submit → génération des 3 scripts ────────────────────
+    async function submitToWebhook() {
+      const productName2 = document.getElementById("productName2").value.trim();
+      const productDesc2 = document.getElementById("productDescription2").value.trim();
+
+      if (!productName2 || !productDesc2) {
+        showToast("⚠️ Veuillez remplir le nom et la description.", "error");
+        return;
+      }
+
+      const ai = document.getElementById("avatarSelect").value;
+      const vi = document.getElementById("voiceSelect").value;
+
+      const payload = {
+        product_name:        productName2,
+        product_description: productDesc2,
+        avatar_id:    ai !== "" ? avatarsData[ai].avatar_id   : null,
+        avatar_name:  ai !== "" ? avatarsData[ai].avatar_name : null,
+        voice_id:     vi !== "" ? filteredVoices[vi].voice_id : null,
+        voice_name:   vi !== "" ? filteredVoices[vi].name     : null,
+        submitted_at: new Date().toISOString()
+      };
+
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      document.getElementById("scriptsSection").style.display = "none";
+      document.getElementById("selectedScriptBox").style.display = "none";
+      document.getElementById("loadingScripts").style.display = "flex";
+      showToast("⏳ Génération des scripts…", "loading");
+
+      try {
+        const res = await fetch("https://yassineel123.app.n8n.cloud/webhook/video", {
+          method:  "POST",
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          body:    JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const result = await res.json();
+
+          // Mémoriser le produit pour l'utiliser lors du clic "Générer la vidéo"
+          lastProductName = productName2;
+          lastProductDesc = productDesc2;
+
+          document.getElementById("scriptText1").value = result.script1 || "";
+          document.getElementById("scriptText2").value = result.script2 || "";
+          document.getElementById("scriptText3").value = result.script3 || "";
+
+          [1,2,3].forEach(n => {
+            document.getElementById(`scriptCard${n}`).classList.remove("selected");
+            document.getElementById(`btnSelect${n}`).classList.remove("active");
+            document.getElementById(`btnSelect${n}`).textContent = "Choisir ce script";
+          });
+          selectedScript = "";
+
+          document.getElementById("loadingScripts").style.display = "none";
+          document.getElementById("scriptsSection").style.display = "block";
+          document.getElementById("scriptsSection").scrollIntoView({ behavior: "smooth" });
+
+          showToast("✅ 3 scripts générés !", "success");
+          document.getElementById("productName2").value = "";
+          document.getElementById("productDescription2").value = "";
+
+        } else {
+          document.getElementById("loadingScripts").style.display = "none";
+          showToast(`❌ Erreur ${res.status} — Vérifiez le webhook n8n`, "error");
+        }
+      } catch (err) {
+        document.getElementById("loadingScripts").style.display = "none";
+        showToast("❌ Connexion refusée. Vérifiez que n8n écoute.", "error");
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function showToast(message, type) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = type;
+      toast.style.display = "block";
+      toast.style.opacity = "1";
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => { toast.style.display = "none"; }, 400);
+      }, 4000);
+    }
+
+  </script>
+
+</body>
+</html>
