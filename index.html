@@ -784,7 +784,7 @@ async function generateVideo() {
   document.querySelector(".right-col").scrollIntoView({behavior:"smooth"});
   showToast("Video generation started...","loading");
   try {
-    var res=await fetch("https://yassineel02.app.n8n.cloud/webhook-test/generation-video",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(payload)});
+    var res=await fetch("https://yassineel02.app.n8n.cloud/webhook/generation-video",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(payload)});
     if(!res.ok) throw new Error("Webhook error "+res.status);
     var result=await res.json();
     var videoId=result.video_id||result.videoId||result.id||null;
